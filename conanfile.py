@@ -16,11 +16,7 @@ class GodotcppConan(ConanFile):
 
     scons_options = {}
 
-    def source(self):
-        self.run("git clone --single-branch --branch=3.1 --depth=1 --recursive https://github.com/GodotNativeTools/godot-cpp.git .")
-
-    def build(self):
-        
+    def populate_scons_options(self):
         if self.settings.os == "Windows":
             self.scons_options['platform'] = "windows"
         elif self.settings.os == "Linux":
@@ -35,6 +31,11 @@ class GodotcppConan(ConanFile):
         elif self.settings.arch == "x86_64":
             self.scons_options['bits'] = "64"
 
+    def source(self):
+        self.run("git clone --single-branch --branch=3.1 --depth=1 --recursive https://github.com/GodotNativeTools/godot-cpp.git .")
+
+    def build(self):
+        self.populate_scons_options()
         self.run('scons -C platform={} generate_bindings=yes target={} bits={}'.format(self.scons_options['platform'], self.scons_options['target'], self.scons_options['bits']))
 
     def package(self):
@@ -50,6 +51,7 @@ class GodotcppConan(ConanFile):
         self.copy("*.a", dst="lib", keep_path=False)
 
     def package_info(self):
+        self.populate_scons_options()
         self.cpp_info.includedirs = ["include", "include/core", "include/gen"]
         self.cpp_info.libs = ["libgodot-cpp.{}.{}.{}".format(self.scons_options['platform'], self.scons_options['target'], self.scons_options['bits'])]
 
