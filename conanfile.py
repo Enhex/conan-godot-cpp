@@ -3,7 +3,7 @@ from conans import ConanFile, tools
 
 class GodotcppConan(ConanFile):
     name = "godot-cpp"
-    version = "3.1"
+    version = "3.2"
     license = "MIT"
     author = "Enhex enhex0@gmail.com"
     url = "https://github.com/Enhex/conan-godot-cpp"
@@ -32,7 +32,7 @@ class GodotcppConan(ConanFile):
             self.scons_options['bits'] = "64"
 
     def source(self):
-        self.run("git clone --single-branch --branch=3.1 --depth=1 --recursive https://github.com/GodotNativeTools/godot-cpp.git .")
+        self.run("git clone --single-branch --branch=3.2 --depth=1 --recursive https://github.com/GodotNativeTools/godot-cpp.git .")
 
     def build(self):
         self.populate_scons_options()
