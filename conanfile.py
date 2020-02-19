@@ -53,5 +53,6 @@ class GodotcppConan(ConanFile):
     def package_info(self):
         self.populate_scons_options()
         self.cpp_info.includedirs = ["include", "include/core", "include/gen"]
-        self.cpp_info.libs = ["libgodot-cpp.{}.{}.{}".format(self.scons_options['platform'], self.scons_options['target'], self.scons_options['bits'])]
+        lib_prefix = "lib" if self.settings.os == "Windows" else ""
+        self.cpp_info.libs = ["{}godot-cpp.{}.{}.{}".format(lib_prefix, self.scons_options['platform'], self.scons_options['target'], self.scons_options['bits'])]
 
