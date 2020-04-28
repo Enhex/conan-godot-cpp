@@ -1,5 +1,5 @@
 from conans import ConanFile, tools
-
+from pathlib import Path
 
 class GodotcppConan(ConanFile):
     name = "godot-cpp"
@@ -37,6 +37,12 @@ class GodotcppConan(ConanFile):
     def build(self):
         self.populate_scons_options()
         self.run('scons -C platform={} generate_bindings=yes target={} bits={}'.format(self.scons_options['platform'], self.scons_options['target'], self.scons_options['bits']))
+        # some tools try to remove library file extention, and because the name format uses dots, it ends up removing part of the name.
+        # to solve this replace this naming kludge with a single sane name.
+        for path in Path('.').rglob('*godot-cpp*.*'):
+            prefix = "lib" if self.settings.os != "Windows" else ""
+            suffix = path.suffix
+            path.replace(str(path.with_name(prefix + 'godot-cpp')) + suffix)
 
     def package(self):
         self.copy("*.h", dst="include", src="godot_headers")
@@ -53,6 +59,5 @@ class GodotcppConan(ConanFile):
     def package_info(self):
         self.populate_scons_options()
         self.cpp_info.includedirs = ["include", "include/core", "include/gen"]
-        lib_prefix = "lib" if self.settings.os == "Windows" else ""
-        self.cpp_info.libs = ["{}godot-cpp.{}.{}.{}".format(lib_prefix, self.scons_options['platform'], self.scons_options['target'], self.scons_options['bits'])]
+        self.cpp_info.libs = ["godot-cpp"]
 
