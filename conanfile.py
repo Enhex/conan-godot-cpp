@@ -3,7 +3,7 @@ from os import cpu_count
 
 class GodotcppConan(ConanFile):
     name = "godot-cpp"
-    version = "master"
+    version = "4.1"
     license = "MIT"
     author = "Enhex enhex0@gmail.com"
     url = "https://github.com/Enhex/conan-godot-cpp"
@@ -32,7 +32,7 @@ class GodotcppConan(ConanFile):
             self.scons_options['bits'] = "64"
 
     def source(self):
-        self.run("git clone --single-branch --branch=master --depth=1 --recursive https://github.com/godotengine/godot-cpp.git .")
+        self.run("git clone --single-branch --branch=4.1 --depth=1 --recursive https://github.com/godotengine/godot-cpp.git .")
 
     def build(self):
         self.populate_scons_options()
