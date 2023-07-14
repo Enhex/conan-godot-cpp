@@ -1,15 +1,13 @@
-#include <Godot.hpp>
-#include <Node.hpp>
+#include <godot_cpp/classes/sprite2d.hpp>
 
 namespace godot
 {
-	struct Test : Node
+	struct Test : Sprite2D
 	{
-		GODOT_CLASS(Test, Node)
+		GDCLASS(Test, Sprite2D)
 
-	public:
-		static void _register_methods(){}
-		void _init(){}
+	protected:
+		static void _bind_methods(){}
 	};
 }
 
