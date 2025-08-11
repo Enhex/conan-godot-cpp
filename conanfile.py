@@ -1,5 +1,6 @@
-from conans import ConanFile, tools
-from os import cpu_count
+from conan import ConanFile, tools
+from conan.tools.files import copy
+from os import cpu_count, path
 
 class GodotcppConan(ConanFile):
     name = "godot-cpp"
@@ -10,9 +11,9 @@ class GodotcppConan(ConanFile):
     description = "C++ bindings for the Godot script API"
     topics = ("godot")
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False]}
-    default_options = "shared=False"
-    generators = "scons"
+    options = {"shared": [True, False], "fPIC": [True, False]}
+    default_options = {"shared": False, "fPIC": True}
+    generators = "SConsDeps"
 
     scons_options = {}
 
@@ -39,21 +40,19 @@ class GodotcppConan(ConanFile):
         self.run('scons -j{} platform={} target={} bits={}'.format(cpu_count(), self.scons_options['platform'], self.scons_options['target'], self.scons_options['bits']))
 
     def package(self):
-        self.copy("*.h", dst="include", src="gdextension")
-        self.copy("*.hpp", dst="include", src="gdextension")
-        self.copy("*.h", dst="include", src="include")
-        self.copy("*.hpp", dst="include", src="include")
-        self.copy("*.h", dst="include", src="gen/include")
-        self.copy("*.hpp", dst="include", src="gen/include")
-
-        self.copy("*.lib", dst="lib", keep_path=False)
-        self.copy("*.dll", dst="bin", keep_path=False)
-        self.copy("*.so", dst="lib", keep_path=False)
-        self.copy("*.dylib", dst="lib", keep_path=False)
-        self.copy("*.a", dst="lib", keep_path=False)
+        copy(self, "*.h",path.join(self.source_folder, "gdextension"),path.join(self.package_folder, "include"))
+        copy(self, "*.hpp",path.join(self.source_folder, "gdextension"),path.join(self.package_folder, "include"))
+        copy(self, "*.h",path.join(self.source_folder, "include"),path.join(self.package_folder, "include"))
+        copy(self, "*.hpp",path.join(self.source_folder, "include"),path.join(self.package_folder, "include"))
+        copy(self, "*.h",path.join(self.source_folder, "gen/include"),path.join(self.package_folder, "include"))
+        copy(self, "*.hpp",path.join(self.source_folder, "gen/include"),path.join(self.package_folder, "include"))
+        copy(self, "*.a", path.join(self.build_folder, "bin"), path.join(self.package_folder, "lib"), keep_path=False)
+        copy(self, "*.so", path.join(self.build_folder, "bin"), path.join(self.package_folder, "lib"), keep_path=False)
+        copy(self, "*.lib", path.join(self.build_folder, "bin"), path.join(self.package_folder, "lib"), keep_path=False)
+        copy(self, "*.dll", path.join(self.build_folder, "bin"), path.join(self.package_folder, "bin"), keep_path=False)
+        copy(self, "*.dylib", path.join(self.build_folder, "bin"), path.join(self.package_folder, "lib"), keep_path=False)
 
     def package_info(self):
         self.populate_scons_options()
-        self.cpp_info.includedirs = ["include", "include/core", "include/gen"]
+        self.cpp_info.includedirs = ["include"]
         self.cpp_info.libs = ["godot-cpp.{}.{}.x86_{}".format(self.scons_options['platform'], self.scons_options['target'], self.scons_options['bits'])]
-
