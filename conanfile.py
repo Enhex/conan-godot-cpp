@@ -40,6 +40,8 @@ class GodotcppConan(ConanFile):
         self.run('scons -j{} platform={} target={} bits={}'.format(cpu_count(), self.scons_options['platform'], self.scons_options['target'], self.scons_options['bits']))
 
     def package(self):
+        copy(self, "*.inc",path.join(self.source_folder, "include"),path.join(self.package_folder, "include"))
+
         copy(self, "*.h",path.join(self.source_folder, "gdextension"),path.join(self.package_folder, "include"))
         copy(self, "*.hpp",path.join(self.source_folder, "gdextension"),path.join(self.package_folder, "include"))
         copy(self, "*.h",path.join(self.source_folder, "include"),path.join(self.package_folder, "include"))
